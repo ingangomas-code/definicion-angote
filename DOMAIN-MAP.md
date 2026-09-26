@@ -2,7 +2,7 @@
 
 ## 1. Visión General (Overview)
 
-**Estado:** Documento de Definición Arquitectónica y Mapa de Dominio de Negocio para el **Common Data Environment (CDE)** y **ERP Modular** de **Constructora Angote SRL**.
+**Estado:** Documento de Definición Arquitectónica y Mapa de Dominio de Negocio para el **Common Data Environment (CDE)** y **ERP Modular** **UNIFICADO** de **Constructora Angote SRL**.
 Estas áreas delimitan fronteras semánticas del negocio de la construcción dominicana, gobernanza de datos y flujos de autoridad, no simples menús o tablas aisladas.
 
 ```mermaid
@@ -72,11 +72,88 @@ flowchart TD
 - **Conceptos Clave:** Parte (*Party*), Persona Física, Persona Jurídica, RNC / Cédula, Punto de Contacto, Rol de Negocio (Cliente, Subcontratista, Proveedor de Insumos, Empleado Fijo, Trabajador de Campo por Día, Chofer, Socio), Historial de Relaciones y Calificación Operativa. Las partes han de entenderse en su relacion jerarquica y de poder dentro de la organizacion, ejemplo de esto es la relacion entre el Ing. Superior, el Ing. de Campo, el Arquitecto y el Maestro de Obra es vertical en algunos casos y en otros horizontales, los cuales a su vez pueden ser relacionados con los proveedores como por ejemplo la relacion del Maestro de Obra con el proveedor de Block y Arena.
 - **Regla Inviolable:** Una misma entidad jurídica o persona física posee un único registro maestro en el CDE, pero puede asumir múltiples roles fechados y no excluyentes (ej. un socio que también actúa como contratista o proveedor de equipo).
 
+#### Partes, Roles, Perfiles y Usuarios del CDE
+
+En el CDE, una **Parte** es una persona física u organización identificada en el registro maestro. Un **rol** describe la responsabilidad que esa Parte asume en una relación, proyecto u obra y puede cambiar con el tiempo. Un **usuario** es una identidad autenticada que accede a la plataforma; puede tener uno o varios perfiles de acceso. Un **perfil** agrupa permisos funcionales. Los permisos se asignan según necesidad y alcance, no por el cargo nominal. Los **insumos** son recursos catalogados, no Partes, aunque cada proveedor de esos insumos sí es una Parte.
+
+**Partes y roles identificados:**
+- **CEO / Dirección General:** Define dirección, prioridades y asignación de recursos; decide o delega decisiones de inversión y alcance y aprueba asuntos ejecutivos dentro de sus atribuciones. En el CDE consulta indicadores y autoriza decisiones reservadas a Dirección.
+- **Cliente / Promotor:** Parte que encarga o financia el proyecto. Consulta entregables y avances, emite observaciones y aprueba presupuestos, cambios, certificaciones u otros hitos cuando así lo establece el contrato.
+- **Suplidores / Proveedores:** Personas u organizaciones que cotizan o suministran materiales, equipos o servicios. Reciben solicitudes, presentan ofertas y entregan documentos comerciales; su acceso se limita a sus propios procesos y documentos.
+- **Insumos:** Materiales, equipos consumibles, mano de obra y otros recursos utilizados o costeados en el proyecto. Se catalogan con unidad, especificación, precio y fuente; se vinculan a proveedores, APUs, presupuestos, requisiciones, órdenes y recepciones. No son usuarios ni Partes.
+- **Administrador de la empresa:** Coordina procesos administrativos, documentación y autorizaciones operativas delegadas. Mantiene expedientes y soportes; no sustituye la aprobación técnica ni la autorización financiera reservada a otros responsables.
+- **Contabilidad:** Clasifica y revisa comprobantes, obligaciones, retenciones y registros fiscales; prepara reportes 606/607 y conciliaciones para validación y presentación conforme a las responsabilidades legales de la empresa.
+- **Recursos Humanos:** Mantiene expedientes laborales, contratos, cargos, altas/bajas, capacitaciones y datos de nómina con acceso restringido. Coordina con HSEQ las evidencias de inducción y formación, sin exponer datos laborales a usuarios no autorizados.
+- **Abogados / Asesoría Legal:** Revisa contratos, adendas, reclamaciones, obligaciones, permisos y riesgos legales; emite observaciones y dictámenes. No aprueba por sí sola cambios técnicos ni pagos.
+- **Ingeniero (general):** Profesional técnico asignado a una disciplina o función del proyecto. El CDE debe registrar su especialidad, responsabilidad, proyecto, entregables y autoridad de revisión o aprobación.
+- **Ingeniero del Departamento de Presupuestos / Costos:** Estructura partidas, cantidades, APUs, presupuestos y análisis de variaciones; documenta fuentes, supuestos y versiones y somete las líneas base y cambios a aprobación.
+- **Ingeniero Residente:** Responsable técnico-operativo de uno o varios frentes. Registra bitácora, cantidades, recursos, incidencias y evidencias; inspecciona trabajos y recomienda o valida mediciones dentro de la matriz de autoridad.
+- **Ingeniero Senior / Ingeniero Superior:** Proporciona supervisión técnica, revisa entregables y desviaciones y escala decisiones. Aprueba únicamente los asuntos asignados formalmente a su nivel.
+- **Ingeniero Estructuralista:** Desarrolla y revisa cálculos, memorias, especificaciones y planos estructurales; responde consultas y evalúa impactos de cambios en su disciplina.
+- **Ingeniero Sanitario:** Desarrolla y revisa diseños, memorias, especificaciones y planos de agua potable, aguas residuales y drenaje; coordina interfaces y responde consultas de su disciplina.
+- **Ingeniero Eléctrico:** Desarrolla y revisa diseños, memorias, especificaciones y planos eléctricos; coordina interfaces y responde consultas de su disciplina.
+- **Ingeniero Junior:** Apoya levantamientos, cálculos, planos, inspecciones y actualización documental bajo revisión del profesional responsable. No emite aprobaciones reservadas a un revisor autorizado.
+- **Arquitecto:** Desarrolla y coordina el diseño arquitectónico, planos, especificaciones y respuestas a consultas de su disciplina.
+- **Arquitecto Senior:** Lidera o revisa soluciones arquitectónicas, coordinación interdisciplinaria y cumplimiento de criterios de diseño; registra observaciones y aprobaciones asignadas.
+- **Decoradores:** Proponen acabados, mobiliario y elementos decorativos según alcance. Sus selecciones se registran como propuestas hasta ser aprobadas e incorporadas a documentos o presupuesto autorizados.
+- **Diseñadores de interiores:** Desarrollan distribución, acabados, mobiliario, iluminación interior y documentación de interiores; coordinan sus decisiones con arquitectura y disciplinas técnicas.
+- **Paisajista:** Diseña espacios exteriores, especies, riego y acabados de paisaje; coordina redes y drenajes y entrega planos y criterios de mantenimiento.
+- **Contratistas:** Personas u organizaciones contratadas directamente para ejecutar un alcance. Consultan documentos autorizados, registran entregables y evidencias y presentan mediciones o solicitudes según su contrato.
+- **Subcontratistas:** Partes contratadas por un contratista o por la empresa para un paquete delimitado. Su relación contractual y responsable principal deben quedar registrados; su acceso se limita al alcance, frente y documentos asignados.
+- **Maestro de Obra / Capataz:** Coordina en campo las cuadrillas, secuencias diarias, materiales y herramientas; reporta recursos, producción e incidencias al Ingeniero Residente. No certifica por sí solo trabajos ni autoriza pagos salvo delegación expresa.
+- **Empleados:** Personas vinculadas laboralmente a la empresa, con cargo, unidad, proyecto si aplica, supervisor y vigencia registrados. Su rol laboral no implica automáticamente acceso al CDE.
+- **Choferes:** Personal o proveedores responsables de conducir y entregar materiales o equipos. Registran viajes, entregas, conduces e incidencias de flota según permisos; acceden solo a la información operativa necesaria.
+- **Obreros / Operarios:** Personal que ejecuta trabajos especializados o generales en obra. Puede aportar registros de asistencia, actividad, seguridad y producción mediante el supervisor o una interfaz autorizada; no accede por defecto a información contractual o financiera.
+- **Peones / Ayudantes:** Personal de apoyo a las cuadrillas. Se registra su asignación, asistencia, capacitación y supervisión, con acceso limitado a sus propias tareas cuando la plataforma lo requiera.
+- **Supervisores:** Revisan el cumplimiento de alcance, método, calidad, seguridad y avance en el ámbito que tengan asignado. Registran inspecciones y hallazgos; una recomendación no equivale a aprobación contractual o financiera.
+- **Inspectores:** Ejecutan verificaciones técnicas, HSEQ o de calidad con listas de chequeo, resultados y evidencias. Su autoridad para aceptar, rechazar o liberar una actividad depende de su nombramiento y matriz de aprobaciones.
+
+**Roles adicionales necesarios para el flujo de trabajo:**
+- **Director o gerente de proyecto:** Integra alcance, costo, plazo, riesgos y responsables; coordina decisiones entre dominios y escala a Dirección las que exceden su autoridad.
+- **Planificador / Scheduler:** Mantiene la EDT/WBS, dependencias, hitos, línea base y actualizaciones del cronograma; analiza desviaciones sin registrar transacciones financieras.
+- **Coordinador BIM / Gestor de información:** Administra modelos federados, coordinación de disciplinas, incidencias de interferencias, nomenclatura y estados de información; no reemplaza la aprobación de diseño de cada disciplina.
+- **Responsable HSEQ:** Mantiene matrices de riesgos, inducciones, permisos de trabajo, inspecciones, incidentes, medidas correctivas y evidencias ambientales y de calidad que le correspondan.
+- **Responsable de Calidad / Laboratorio:** Gestiona planes de inspección y ensayo, muestras, resultados, no conformidades y liberaciones técnicas dentro de su competencia y acreditación.
+- **Responsable de Procura / Comprador:** Gestiona requisiciones, solicitudes de cotización, comparativos, órdenes y seguimiento a suplidores, respetando presupuesto, niveles de aprobación y segregación de funciones.
+- **Almacenero / Encargado de almacén:** Registra recepción, inspección, ubicación, despacho, devolución y existencias de materiales y herramientas, vinculándolos con proyecto, obra y centro de costos.
+- **Controlador de costos / Analista de costos:** Compara presupuesto, compromisos, devengos y costos reales; prepara alertas y análisis de variación para revisión de los responsables.
+- **Tesorería:** Programa y registra cobros y desembolsos autorizados, concilia movimientos bancarios y adjunta comprobantes; no aprueba por sí sola el soporte técnico ni fiscal que origina el pago.
+- **Administrador del CDE / Seguridad de información:** Gestiona cuentas, perfiles, permisos, altas/bajas, configuración y auditoría técnica. No recibe autoridad automática para aprobar contratos, mediciones o pagos por administrar la plataforma.
+- **Representante del cliente / Supervisión externa:** Revisa entregables y certificaciones en nombre del cliente conforme al contrato, registra comentarios y ejerce únicamente las aprobaciones delegadas.
+- **Consultores y especialistas externos:** Geotécnicos, topógrafos, laboratorios, especialistas MEP, ambientales u otros. Entregan estudios y revisiones dentro de su alcance, con autoría, credenciales y vigencia documentadas.
+- **Autoridades y entidades reguladoras:** MIVED, ayuntamientos, MOPC, MITUR, Ministerio de Medio Ambiente y otras entidades competentes. Se registran como entidades externas y sus expedientes, comunicaciones y resoluciones se archivan; no se representan como usuarios internos ni se presume integración directa con sus sistemas.
+- **Entidades financieras y PSFE:** Bancos y proveedores de servicios de facturación electrónica participan mediante cuentas, comprobantes, estados o respuestas de servicio. Se gestionan como contrapartes o integraciones externas, no como aprobadores internos.
+- **Auditor independiente / Revisor:** Consulta evidencia y registros dentro del alcance autorizado y documenta hallazgos. Debe tener acceso de solo lectura, salvo encargo expreso distinto.
+
+**Participantes directos e indirectos del flujo:**
+- **Directos (internos):** Dirección General, gerencia de proyecto, personal técnico y de diseño, Residente y equipo de campo, HSEQ y Calidad, Procura y Almacén, Administración, Contabilidad, Tesorería, Recursos Humanos y administración técnica del CDE. Se asignan a una unidad, proceso, proyecto u obra y responden por registrar, revisar o aprobar actividades internas según su función.
+- **Indirectos (externos):** Clientes y sus representantes; contratistas, subcontratistas y suplidores; consultores, laboratorios e inspectores externos; asesores legales; auditores; autoridades; bancos y PSFE. Participan mediante entregables, comentarios, expedientes, facturas, certificaciones o servicios externos. Solo reciben cuenta de acceso si necesitan operar en el CDE y existe autorización; el resto de sus comunicaciones y documentos se registra como evidencia, sin crear usuarios innecesarios.
+
+**Perfiles de acceso y participantes:**
+- **Perfil Ejecutivo:** Dirección General; consulta transversal y aprueba decisiones ejecutivas asignadas.
+- **Perfil de Gestión de Proyecto:** Director/gerente de proyecto; administra información del proyecto y coordina revisiones y aprobaciones delegadas.
+- **Perfil Técnico y BIM:** Ingenieros, arquitectos y coordinador BIM; crea o revisa documentos de su disciplina y consulta las interfaces necesarias.
+- **Perfil de Campo:** Residente, supervisores, maestros y personal autorizado; registra bitácora, avance, recursos, inspecciones e incidencias del frente asignado.
+- **Perfil HSEQ y Calidad:** Responsables e inspectores autorizados; administra controles, ensayos, hallazgos y cierres correspondientes.
+- **Perfil de Procura y Almacén:** Compradores y almaceneros; tramita requisiciones, cotizaciones, órdenes y movimientos de inventario autorizados.
+- **Perfil Financiero y Contable:** Administración, Contabilidad y Tesorería; revisa soportes, registra obligaciones, prepara reportes y ejecuta pagos ya autorizados según segregación de funciones.
+- **Perfil Legal y Recursos Humanos:** Acceso a contratos o expedientes laborales según ámbito, con restricción de datos confidenciales y sin acceso general a otros proyectos.
+- **Perfil de Cliente / Contratista / Suplidor:** Acceso externo, limitado a sus proyectos, contratos, entregables, solicitudes y documentos compartidos.
+- **Perfil de Auditor / Consulta:** Lectura de registros y evidencias autorizados, sin edición ni aprobación.
+- **Perfil de Administración Técnica del CDE:** Gestiona identidades, permisos, configuración y auditoría de la plataforma; no debe autoasignarse aprobaciones de negocio.
+
+**Reglas de asignación:** Cada usuario debe corresponder a una identidad individual verificable; las cuentas compartidas no permiten atribuir acciones y deben evitarse. Una cuenta se activa por invitación y se vincula a una Parte cuando corresponda, con organización, rol, proyecto/obra, supervisor, vigencia y perfil autorizados. Los usuarios externos reciben acceso limitado y revocable. Las aprobaciones quedan asociadas a la persona, fecha, objeto y versión aprobada. Cuando sea posible, quien prepara una transacción no debe ser la única persona que la revisa y autoriza; las excepciones requieren delegación documentada. La baja o cambio de función revoca o ajusta los accesos sin borrar el historial de auditoría.
+
+**Distinción de identidad y autoridad:** Ser Parte, tener un cargo, poseer una cuenta o aparecer como responsable de una tarea no confiere por sí solo autoridad de aprobación. Las atribuciones se determinan por contrato, delegación vigente y matriz de aprobación del proyecto; cada persona solo puede aprobar dentro de su ámbito asignado.
+
+________
+
+
 ### 2.2. Proyectos, Contratos y Expediente Técnico (*Projects, Contracts & BIM CDE*)
 - **Propósito:** Delimitación legal, geográfica, temporal y técnica de cada intervención constructiva ("Catalina", "Torre Romana", "Angamos Residence", etc.).
 - **Conceptos Clave:** Proyecto, Contrato Principal, Sitio/Geolocalización de Obra, Centro de Costos, Adendas Contractuales, Modelo Digital BIM (IFC / Revit / Visor 3D), Planos Aprobados, Especificaciones Técnicas y Bitácora Digital de Obra.
 **Proyecto**: Un Proyecto se comprende como una entidad con vida propia que se desarrolla en un periodo de tiempo y tiene un presupuesto y unos objetivos definidos, el proyecto es la unidad minima de registro en el sistema, es decir, que todo lo que se registre en el sistema debe estar relacionado con un proyecto, de igual forma el proyecto tiene un centro de costo y un responsable asignado, los cuales a su vez se relacionan jerarquicamente con otras partes de negocio como por ejemplo el Ing. Superior, el Ing. de Campo, el Arquitecto y el Maestro de Obra. Un proyecto puede contener varias obras, y cada obra puede tener varios centros de costos y varios responsables asignados, segun rol categoria o disciplina.
-__que comprende un proyecto__: La planificacion conceptual, el diseño, Los planos 2D el modelo BIM (IFC / Revit, Archicad, Scketchup / Visor 3D) (de diferentes disciplinas arquitectonico, estructural, MEP, etc.), el presupuesto base y adicionales (adendas), las obras, La contratacion, los contratos (parte legal), Estudios y Analisis (estudio de suelo, estudio topografico, estudio hidrografico, etc.), El paisajismo y Jardineria, los centros de control de costo y gastos (pagos, cubicaciones, compras, etc.), los Cronogramas e hitos, la planificacion financiera (parte contable y de flujo de caja), la bitacora digital (parte de registro de actividades, control de avance fisico, recursos, personal, equipos, materiales, etc.), la telemetria y sensores IoT de obra, Las Evaluaciones de Sostenibilidad, la capa analitica (curvas s , valor ganado EVM, CPI, SPI, CV, SV, BAC, EAC y   Variance Analysis), la gestión del cambio,  el cierre del proyecto, la evaluacion post-proyecto y los aprendizajes obtenidos (Los aprendizajes obtenidos deben servir para mejorar los procesos, herramientas y tecnologias a implementar para  mejorar la calidad, eficiencia, productividad, seguridad y sostenibilidad de futuros proyectos).
+__que comprende un proyecto__: La planificacion conceptual, el diseño, Los planos 2D el modelo BIM (IFC / Revit, Archicad, Scketchup / Visor 3D) (de diferentes disciplinas arquitectonico, estructural, MEP, etc.), el presupuesto base y adicionales (adendas), las obras, La contratacion, los contratos (parte legal), Estudios y Analisis (estudio de suelo, estudio topografico, estudio hidrografico, etc.), El paisajismo y Jardineria, los centros de control de costo y gastos (pagos, cubicaciones, compras, etc.), los Cronogramas e hitos, la planificacion financiera (parte contable y de flujo de caja), la bitacora digital (parte de registro de actividades, control de avance fisico, recursos, personal, equipos, materiales, etc.), la telemetria y sensores IoT de obra, Las Evaluaciones de Sostenibilidad, la capa analitica (curvas s , valor ganado EVM, CPI, SPI, CV, SV, BAC, EAC y   Variance Analysis), la gestión del cambio, el cierre del proyecto, la evaluacion post-proyecto y los aprendizajes obtenidos (que deben servir para mejorar los procesos, herramientas y tecnologias y elevar la calidad, eficiencia, productividad, seguridad y sostenibilidad de futuros proyectos), la gestión **HSEQ (Health, Safety, Environment and Quality; Salud, Seguridad, Medio Ambiente y Calidad)** y la **permisología legal** aplicable (MIVED, ayuntamientos, MOPC, MITUR, Ministerio de Medio Ambiente y demás entidades competentes, según el alcance y la ubicación del proyecto).
 
 #### Desglose Detallado y Delimitación Operativa de los Conceptos del Proyecto:
 
@@ -90,7 +167,7 @@ __que comprende un proyecto__: La planificacion conceptual, el diseño, Los plan
 
    - **Disciplinas Integradas:** Arquitectura, Ingeniería Estructural (hormigón armado, perfiles metálicos, cimentaciones), Instalaciones Hidrosanitarias (distribución de agua potable, aguas residuales y drenaje pluvial), Instalaciones Eléctricas (acometidas de media/baja tensión, cuadros de carga, iluminación, fuerza), Climatización/HVAC, Redes Especiales (contraincendios, voz y datos, seguridad, control de acceso) y Paisajismo.
    - **Componentes en el CDE:** Memorias de cálculo estructural, memorias descriptivas de cargas, memorias sanitarias y de ventilación, especificaciones técnicas de materiales y fichas de requerimientos de equipos.
-   - **Delimitación y Fronteras:** Constituye el sustento técnico y matemático de cálculo; se delimita frente a los *Planos* (que son el producto gráfico contractual y formal) y frente al *Modelo BIM* (que es la representación tridimensional paramétrica e interactiva). Concluye en su fase inicial cuando las memorias técnicas quedan congeladas y aprobadas para tramitación, sin embargo cabe destacar que esta fase no muere pues siempre se debe tener acceso a las memorias de diseño . (Ejemplo: En una fase posterior de obra se requiere cambiar una especificación de concreto, se debe tener acceso a la memoria de diseño para entender las implicaciones del cambio en la estructura y garantizar la seguridad del proyecto).
+   - **Delimitación y Fronteras:** Constituye el sustento técnico y matemático de cálculo; se delimita frente a los *Planos* (que son el producto gráfico contractual y formal) y frente al *Modelo BIM* (que es la representación tridimensional paramétrica e interactiva). Concluye en su fase inicial cuando las memorias técnicas quedan congeladas y aprobadas para tramitación, sin embargo cabe destacar que esta fase no muere pues siempre se debe tener acceso a las memorias de diseño Para tramitar y gestionar cambios. (Ejemplo: En una fase posterior de obra se requiere cambiar una especificación de concreto, se debe tener acceso a la memoria de diseño para entender las implicaciones del cambio en la estructura y garantizar la seguridad del proyecto).
 
 3. **Los Planos (*Drawings, Blueprints & Technical Expedient*):**
    - **Definición y Alcance:** Representación gráfica bidimensional normalizada y codificada que comunica formalmente las soluciones de diseño. Es el documento contractual y jurídico que guía la ejecución material in situ y ampara las licencias oficiales ante las autoridades de cada pais, en caso de Republica dominicana (MIVED, Ayuntamientos locales, Ministerio de Medio Ambiente, Ayuntamientos, Codia, Cuerpo de Bomberos, Ministerio de Turismo, etc.).
@@ -99,20 +176,24 @@ __que comprende un proyecto__: La planificacion conceptual, el diseño, Los plan
    - **Delimitación y Fronteras:** Un plano es un entregable legal congelado y fechado. En el CDE de Angote se visualiza directamente en el visor in-app (Bóveda S3) sin forzar descargas locales a menos de ser requerido por el usuario. Cualquier modificación surgida en campo no se anota manualmente sobre el papel, sino que exige un RFI (*Request for Information*) y la emisión de una nueva revisión documental formal (Rev 0 -> Rev A -> Rev B).
 
 4. **El Modelo BIM (IFC / Revit / Visor 3D):**
-   - **Definición y Alcance:** Gemelo digital tridimensional, paramétrico y federado del proyecto que consolida en una base de datos espacial única la geometría, propiedades físicas y metadatos de todas las disciplinas (Arquitectónico, Estructural, MEP, etc.). Permite la coordinación técnica previa al inicio de obra y la navegación interactiva tanto para la supervisión como para el cliente.
+   - **Definición y Alcance:** Un modelo Bim es la representacion tridimencional (3D) de la edificacion puede asociarse como Gemelo digital tridimensional, paramétrico y federado del proyecto que consolida en una base de datos espacial única la geometría, propiedades físicas y metadatos de cada disciplina (Arquitectónico, Estructural, MEP, etc.). Permite la coordinación técnica previa al inicio de obra y la navegación interactiva tanto para la supervisión como para el cliente.
    - **Niveles de Desarrollo (LOD):** Desde LOD 200 (volumetría y componentes aproximados), LOD 300/350 (dimensiones precisas, interfaces mecánicas, refuerzos estructurales y trazado coordinado de tuberías), hasta LOD 400 (fabricación y montaje de elementos) y LOD 500 (*As-Built* de operación y mantenimiento).
-   - **Componentes en el CDE:** Detección de interferencias espaciales (*Clash Detection* automatizado entre vigas, losas y ducterías MEP), tablas de extracción geométrica automatizada de cantidades (volúmenes de hormigón en m³, áreas de encofrado en m², peso de acero en kg/toneladas, metros lineales de tuberías) y visor 3D web integrado con compatibilidad abierta IFC y modelos Revit.
-   - **Delimitación y Fronteras:** El modelo BIM no reemplaza per se al contrato ni al presupuesto APU; es la fuente unificada de verdad geométrica. No es una simple maqueta gráfica de renderizado, sino una base de datos tridimensional que alimenta las cubicaciones teóricas y permite contrastar el avance físico real reportado en bitácora.
+   - **Componentes en el CDE:** Detección de interferencias espaciales (*Clash Detection* automatizado generalizado, ej. entre vigas, losas y ducterías MEP), tablas de extracción geométrica automatizada de cantidades (tablas de planificacion) (volúmenes de hormigón en m³, áreas de encofrado en m², peso de acero en kg/toneladas, metros lineales de tuberías) y visor 3D web integrado con compatibilidad abierta IFC y modelos Revit.
+   - **Delimitación y Fronteras:** El modelo BIM no reemplaza per se al contrato ni al presupuesto y analisis de costo (APU); es la fuente unificada de verdad geométrica. No es una simple maqueta gráfica de renderizado, sino una base de datos tridimensional que alimenta las cubicaciones teóricas y permite contrastar el avance físico real reportado en bitácora.
 
 5. **El Presupuesto Base y Adicionales (Adendas):**
-   - **Definición y Alcance:** Estructuración económica valorada de los costos directos e indirectos del proyecto, desglosada jerárquicamente en capítulos, partidas, subpartidas e insumos elementales mediante Análisis de Precios Unitarios (APU). Posee dos vertientes de riguroso aislamiento en el sistema:
+   - **Definición y Alcance:** Estructuración económica valorada de los costos directos e indirectos del proyecto, desglosada jerárquicamente en capítulos, partidas, subpartidas e insumos elementales mediante Análisis de Precios Unitarios (APU). Posee diferentes vertientes de riguroso aislamiento en el sistema:
      - *Presupuesto Base Aprobado:* Línea base contractual económica inicial convenida y rubricada con el promotor/cliente.
-     - *Presupuesto de Adicionales (Adendas):* Modificaciones de alcance, aumentos de volumen, obras extraordinarias o cambios de especificaciones solicitados por el cliente o derivados de contingencias técnicas.
-   - **Componentes en el CDE:** Costo directo (materiales, mano de obra especializada/peones, equipos, subcontratos), costo indirecto (administración, dirección técnica, gastos generales de obra, imprevistos, beneficio de empresa, seguros y cargas sociales TSS), precio contractual de venta, librería global de APUs con fecha y proyecto de origen, y flujo de aprobación de adendas (*Borrador*, *Sometido*, *Aprobado Digitalmente por Cliente*, *Rechazado*).
-   - **Delimitación y Fronteras:** **Regla Inviolable de Angote:** El Presupuesto Base constituye la línea base inmutable del proyecto; jamás se sobreescribe cuando surgen adicionales. Toda adenda se agrega de forma aditiva y segregada con su propio APU y precio unitario aprobado, impidiendo mezclar los compromisos contractuales de origen con las variaciones en curso.
-
+     - *Presupuesto de Adicionales (Adendas):* Modificaciones de alcance, aumentos de volumen, obras extraordinarias o cambios de especificaciones solicitados por el cliente o derivados de contingencias técnicas debida, imprevistos generados por condiciones no estipuladas en las condiciones iniciales, contratos o evaluaciones iniciales.
+   - **Componentes en el CDE:** Costos directos (materiales, Insumos, mano de obra especializada/peones, equipos, subcontratos, costos asociados, carga operativa temporal *oficinas temporales de obra y banos temporales*), costos indirectos (administración, dirección técnica, gastos generales de obra, imprevistos, beneficio de empresa, seguros y cargas sociales TSS), precio contractual de venta, librería global de APUs con fecha y proyecto de origen, y flujo de aprobación de adendas (*Borrador*, *Sometido* *En Revision*, *Aprobado Digitalmente por Cliente*, *Rechazados*).
+   - **Delimitación y Fronteras:** **Regla Inviolable de Angote:** El Presupuesto Base constituye la línea base inmutable del proyecto; jamás se sobreescribe cuando surgen adicionales. Toda adenda se agrega de forma aditiva y segregada con su propio APU y precios unitarios aprobados, impidiendo mezclar los compromisos contractuales de origen con las variaciones en curso.
+   5.2 **Analisis de Costo o Analisis de Precios unitarios (APUS)**
+   - **Definición y Alcance:** El Análisis de Precios Unitarios (APU) determina el costo estimado de ejecutar una unidad de una partida, conforme a sus especificaciones, ubicación, condiciones de obra y fecha de cálculo. Sirve de base para valorar el presupuesto y estimar los recursos requeridos, sin sustituir la medición de cantidades ni la aprobación contractual, ejemplos: se Analiza que cuesta de 1m3 de hormigon de una viga, una columna o una losa, segun sus especificaciones, que cuesta 1m2 de empanete o careteo, que cuesta colocar 1m2 de blocks de 6´´ o de 8´´´, que cuesta 1ml de tuberia x o y, etc. se trata de analizar que cuesta fabricar una partida de forma unitaria o de forma general analizando los costos asociados de insumos y mano de obra y las cantidades especificas asociadas a la partida en analisis y el metodo definido para analizar, sea ml, m2, m3, p2, pl, etc. .
+   - **Componentes del Análisis:** Desglose de materiales e insumos con cantidades de consumo, desperdicios y precios; mano de obra por categoría, cuadrilla, rendimiento y cargas aplicables; equipos y herramientas según tiempo de uso, rendimiento y costos asociados; y costos indirectos o cargos complementarios conforme a la metodología de Angote. El análisis identifica la unidad de pago, el costo por recurso, los subtotales y el precio unitario resultante, dejando explícitos los criterios y supuestos utilizados, **los apus estaran alimentados de los insumos de la base de datos del CDE, los costos de mano de obra estaran asociados a las referencias en la base de datos** .
+   - **Trazabilidad y Control:** Cada Analisis de costo o APU conserva su proyecto y partida de origen, unidad de medida, fecha y fuente de precios, rendimientos, autor, versión y estado de aprobación. Los APUs pueden reutilizarse como referencia desde la librería global, pero cualquier adaptación genera una versión identificable y no modifica los análisis ya aprobados. Las variaciones de alcance o precio que afecten compromisos contractuales se gestionan mediante el presupuesto de la adenda correspondiente; no alteran la línea base aprobada.
+    
 6. **Las Obras (*Works / Physical Execution Fronts & Intervention Sites*):**
-   - **Definición y Alcance:** Subdivisión física, espacial o por etapas de ejecución que reside dentro de un Proyecto. Representa el frente operativo tangible en terreno donde se concentran los recursos, cuadrillas y maquinarias (ej. en el Proyecto "Catalina", las obras pueden ser "Torre 1", "Torre 2", "Casa Club y Áreas Sociales" o "Infraestructura Vial y Servicios").
+   - **Definición y Alcance:** Subdivisión física, espacial o por etapas de ejecución que reside dentro de un Proyecto. Representa el frente operativo tangible en terreno donde se concentran los recursos, cuadrillas y maquinarias (ej. en el Proyecto "Catalina", las obras pueden ser "Villas", "Torre 1", Torre 2", "Casa Club y Áreas Sociales" o "Infraestructura Vial y Servicios", "Escuelas"), en pocas palabras una obra es la ejecucion fisica de un proyecto, el planteamiento fisico de lo establecido en el Modelo BIM o planos aprobados, construcciones, remodelaciones, anexos, etc.
    - **Componentes en el CDE:** Identificador unívoco de obra subordinado al ID de Proyecto, geocerca perimétrica específica en mapa, Ingeniero Residente / de Campo responsable del frente, centros de costo secundarios asignados por categoría o disciplina, almacén de campo local y lista de cuadrillas activas.
    - **Delimitación y Fronteras:** Una Obra no es un Proyecto independiente; no posee personalidad jurídica ni contractual autónoma frente al cliente final. Su propósito es la delimitación geográfica y operativa en campo para evitar que las contingencias o desvíos de un frente distorsionen el análisis de los demás frentes del proyecto.
 
@@ -123,27 +204,30 @@ __que comprende un proyecto__: La planificacion conceptual, el diseño, Los plan
 
 8. **Los Contratos (Parte Legal) (*Legal Contracts, Bonds & Guarantees*):**
    - **Definición y Alcance:** Instrumentos jurídicos formales, legalizados y vinculantes que norman los derechos, deberes, penalizaciones, garantías, plazos y condiciones de pago entre Constructora Angote SRL y las partes del negocio:
-     - *Contrato Principal de Construcción:* Celebrado con el Cliente/Promotor.
+     - *Contrato Principal de Construcción:* Celebrado con el Cliente/Promotor, Aqui se delimitan las condiciones contractuales del proyecto, se establecen los limites y alcances del proyecto en sentido general, limites temporales del proyecto y sus hitos, las condiciones de pago (se define si se realizaran por cubicaciones o atraves de pagos programados en un cashflow definido en fechas determinadas es decir un cronogramas de pagos), se establecen las condiciones de penalidades y limites de penalidades en base a cumplimientos establecidos no cumplidos en ambas partes, condiciones de excepcion para aplicar penalidades, es decir todo lo concernientes y limites generales del proyecto y sus condiciones de pago y de tiempo.
      - *Subcontratos de Obras y Servicios:* Celebrados con empresas especializadas (instalaciones, estructuras metálicas, ventanería, etc.).
      - *Contratos de Prestación de Servicios / Mano de Obra por Ajuste:* Celebrados con maestros de obra o líderes de cuadrilla calificados.
      - *Adendas Contractuales Formales:* Documentos legales aditivos que respaldan modificaciones en monto o prórrogas de tiempo aprobadas.
+     - *Contratos de Personal Tecnico Asociado: *Documento legal Para contratacion de personal tecnico de forma directa en la compania.
+     - *Contratos de Personal de Oficina y administrativo: *Documento legal Para contratacion de personal administrativo y de oficina (Administradores, contables, secretarias, Ingenieros de oficina, Arquitectos, Ingenieros de Obra y todo el personal asociado bajo el cargo de la parte administrativa y recursos humanos, el personal que forma parte integral de la compania y representantes directos de la compania de manera formal, personal de trabajo continuo o temporal a largo plazo con distinciones jerarquicas referenciales a su cargo y posicion o proyecto y su estatus dentro de la entidad).
+       
    - **Componentes en el CDE:** Cláusulas de alcance y especificaciones, esquema de pagos y condiciones de cubicación, retenciones de fondo de garantía (habitualmente entre 5% y 10%), pólizas de fiel cumplimiento, póliza de responsabilidad civil, póliza de vicios ocultos (Responsabilidad Decenal del Art. 1792 del Código Civil dominicano), causales de rescisión, penalidades por atraso imputable y repositorio inmutable en la Bóveda S3 con trazabilidad de firma.
    - **Delimitación y Fronteras:** El Contrato fija el marco de exigibilidad jurídica y gobernanza de riesgos; no se confunde con la Orden de Compra operativa ni con la Cubicación física. La cubicación certifica la cantidad ejecutada; el contrato determina cuándo, bajo qué retenciones y en qué plazos legales procede el desembolso.
 
 9. **Los Centros de Control de Costo y Gastos (Pagos, Cubicaciones, Compras, etc.):**
-   - **Definición y Alcance:** Estructura de segregación analítica y presupuestaria que clasifica, imputa y controla cada transacción económica del proyecto a lo largo de su ciclo de vida en tres estados financieros: *Comprometido* (órdenes de compra y contratos adjudicados), *Devengado* (cubicaciones físicas aprobadas in situ o facturas formales con NCF recibidas) y *Desembolsado* (pagos y transferencias bancarias ejecutadas).
+   - **Definición y Alcance:** Estructura de segregación analítica y presupuestaria que clasifica, imputa y controla cada transacción económica del proyecto a lo largo de su ciclo de vida en tres estados financieros: *Comprometido* (Contratos Adjudicados y órdenes de compra), *Devengado* (cubicaciones físicas o digitales aprobadas in situ o facturas formales con NCF recibidas) y *Desembolsado* (pagos, transferencias bancarias ejecutadas, cheques) (Seguimiento a Costos asociados a proyectos vs partidas presupuestadas, etc.).
    - **Componentes en el CDE:** Código estructurado de centro de costos (`[ID_PROYECTO]-[ID_OBRA]-[DISCIPLINA/PARTIDA]`), clasificadores de gasto (Mano de Obra Directa, Insumos/Materiales, Equipos y Combustible, Subcontratos, Gastos Indirectos), matriz de autorizaciones por rol (Ing. de Campo -> Ing. Superior -> Administración Central), flujo de conciliación de tres vías (*Three-Way Match*: Requisición -> Conduce/Cubicación -> Factura NCF -> Pago) y balance presupuestario en tiempo real.
-   - **Delimitación y Fronteras:** El Centro de Costos no es la cuenta bancaria de tesorería; es la cuenta analítica de imputación y control. **Regla Inviolable:** Ninguna erogación, orden de compra o cubicación puede existir en el CDE sin vincularse inequívocamente a un Proyecto y a un Centro de Costos activo con responsable asignado (exceptuando únicamente gastos administrativos corporativos y de flota debidamente autorizados).
+   - **Delimitación y Fronteras:** El Centro de Costos no es la cuenta bancaria de tesorería; es la cuenta analítica de imputación y control, asociada a los costos asociados de un proyecto para su revision analitica general y manejo integral de la vida del proyecto (con este manejo y control asociado se podra llevar control total de las metricas analiticas correspondientes asociadas a una vida sana de un proyecto entendiendo que gastar mas es perdida y gastar menos no siempre significa que es bueno sino que tambien genera alertas pues puede suponer un desbalance en la calidad de los servicios de Angote por lo que debe siempre someterse a revision todo excedente superior o igual al costo asociado de una partida y todo ahorro que supere un 20% o mas de la partida asociada). **Regla Inviolable:** Ninguna erogación, orden de compra o cubicación puede existir en el CDE sin vincularse inequívocamente a un Proyecto y a un Centro de Costos activo con responsable asignado (exceptuando únicamente gastos administrativos corporativos y de flota debidamente autorizados).
 
 10. **Los Cronogramas e Hitos (*Schedules, WBS & Milestones*):**
-    - **Definición y Alcance:** Modelado y control de la dimensión temporal del proyecto, estructurado a partir de la Estructura de Desglose del Trabajo (EDT/WBS). Determina la secuencia lógica de actividades, calcula las duraciones operativas a partir de los rendimientos de los APU, identifica la Ruta Crítica (CPM) y fija los hitos contractuales no negociables.
-    - **Componentes en el CDE:** Diagrama de Gantt interactivo con dependencias lógicas (Comienzo-Comienzo, Fin-Comienzo, etc.), holgura libre y total por tarea, línea base temporal congelada (*Baseline Schedule*), hitos de control clave (ej. "Término de Cimentación", "Estructura Nivel 4 Vaciada", "Cierre de Fachadas", "Entrega Provisional"), y conexión con el Agente Multi-Agente de IA para alertas preventivas automáticas a subcontratistas vía WhatsApp previo al vencimiento de entregas.
-    - **Delimitación y Fronteras:** Modela y gestiona exclusivamente el factor tiempo y ritmo de ejecución. No registra por sí mismo los desembolsos de dinero (responsabilidad de la Planificación Financiera y la Curva S), pero proporciona la base sobre la cual se calcula el rendimiento temporal y las desviaciones de cronograma.
+    - **Definición y Alcance:** Modelado y control de la dimensión temporal del proyecto, estructurado a partir de la Estructura de Desglose del Trabajo (EDT/WBS). Determina la secuencia lógica de actividades, calcula las duraciones operativas a partir de los rendimientos de los APU, identifica la Ruta Crítica (CPM) y fija los hitos contractuales no negociables de cada proyecto, obra , remodelacion, anexno, etc.
+    - **Componentes en el CDE:** Diagrama de Gantt interactivo con dependencias lógicas (Comienzo-Comienzo, Fin-Comienzo, etc.), holgura libre y total por tarea, línea base temporal congelada (*Baseline Schedule*), hitos de control clave (ej. "Término de Cimentación", "Estructura Nivel 4 Vaciada", "Cierre de Fachadas", "Entrega Provisional"), y conexión con el Agente Multi-Agente de IA y en casos avanzados con modelos predictivos, para alertas preventivas automáticas a subcontratistas vía WhatsApp, Email y llamadas VOIP y Normales previo al vencimiento de entregas, todo proyecto BIM y no BIM generara automaticamente un borrador del cronograma al presionar el boton de generar asistido por AI conectado a las partidas del presupuesto, rendimientos de cuadrillas y personal de la base de datos y/o al modelo BIM, generando su organizacion, su estructuracion sus fechas estimadas y la ruta critica recomendada por la AI desarrollando asi borradores robustos y avanzados para revision humana puede que sean tan certeros que no necesiten ninguna modificacion, sin embargo la IA no elimina la supervision y la dependencia humana, estos agentes no seran AI generativa alucinando, sino un proceso estructurado en base a reglas predeterminadas, los documentos del proyecto pasan por un ETL, por un data frame un analisis descriptivo luego una prospeccion un clustering y luego una prescripcion que ayude a los modelos a generar los cronogramas sin alucinaciones, sirve para informaciones, presupuestos, Modelos BIM y planos (Estos tienen un tratamiento especial pues los modelos BIM y planos tambien se convierten en un grafo para mejor manejo de los asistentes de IA).
+    - **Delimitación y Fronteras:** Modela y gestiona exclusivamente el factor tiempo y ritmo de ejecución. No registra por sí mismo los desembolsos de dinero sino que presenta los borradores si llega informacion al modelo para previa aprobacion del encargado humano, (hace borradores de responsabilidad de la Planificación Financiera y la Curva S), proporciona la base sobre la cual se calcula el rendimiento temporal y las desviaciones de cronograma.
 
 11. **La Planificación Financiera (Parte Contable y de Flujo de Caja):**
     - **Definición y Alcance:** Proyección dinámica, gobernanza de liquidez y conciliación de los flujos monetarios que garantizan la salud operativa del proyecto a lo largo del tiempo. Integra el *Cash Flow Proyectado vs. Real*, la gestión de cobros comerciales y el cumplimiento fiscal estricto ante la Dirección General de Impuestos Internos (DGII).
     - **Componentes en el CDE:** Curva de Egresos Planificada vs. Desembolsos Reales, Flujo de Caja Operativo semanal y mensual, calendario de Cuentas por Cobrar (AR - clientes) y Cuentas por Pagar (AP - suplidores y subcontratistas), fondo de maniobra requerido por fase constructiva, provisiones de retenciones fiscales (ISR, ITBIS) y cargas de la Seguridad Social (TSS).
-    - **Delimitación y Fronteras:** **Aislamiento Contable Absoluto:** El módulo financiero aísla estrictamente la nómina y jornales de campo (maestros de obra, destajistas) de las compras y servicios amparados por comprobantes fiscales NCF/e-CF (Formato 606), impidiendo inconsistencias tributarias. Se delimita del Presupuesto Base en que este último dice *cuánto* costará la obra en su totalidad, mientras que la Planificación Financiera determina *cuándo* y *con qué fondos líquidos* se solventará cada etapa.
+    - **Delimitación y Fronteras:** **Aislamiento Contable Absoluto:** El módulo financiero aísla estrictamente la nómina del personal administrativo de la nomina de proyectos obras, cubicaciones y jornales de campo (maestros de obra, destallistas), las compras y servicios amparados por comprobantes fiscales NCF/e-CF (Formato 606), impidiendo inconsistencias tributarias. Se delimita del Presupuesto Base en que este último dice *cuánto* costará la obra en su totalidad, mientras que la Planificación Financiera determina *cuándo* y *con qué fondos líquidos* se solventará cada etapa.
 
 12. **La Bitácora Digital (Registro de Actividades, Avance Físico, Recursos, Personal, Equipos, Materiales, etc.):**
     - **Definición y Alcance:** Cuaderno oficial, cronológico, inmutable y georreferenciado de la vida diaria en cada frente de obra. Constituye la fuente testimonial y probatoria de hechos (*Ground Truth*) que respalda técnicamente el avance físico real antes de autorizar cualquier pago o emitir una cubicación al cliente o subcontratista.
@@ -153,10 +237,10 @@ __que comprende un proyecto__: La planificacion conceptual, el diseño, Los plan
       - *Equipos y Maquinaria:* Registro de maquinaria activa (camión pesado, camioneta, grúas torre, trompos, generadores), horas efectivas de motor, tiempos muertos y suministro de combustible.
       - *Recepción y Control de Materiales:* Registro de conduces y albaranes de entrega recepcionados in situ (hormigón premezclado, varilla, agregados, blocks), con verificación de firmas de recepción conforme.
       - *Avance Físico y Actividades Ejecutadas:* Tareas concretas desarrolladas por partida, nivel y eje estructural, vaciados de hormigón con control de probetas y resultados de laboratorio.
-      - *Evidencia Fotográfica y Multimodal:* Fotografías inalterables con marca de agua (fecha, hora y geolocalización GPS), audios de campo procesados por el motor de IA (vía WhatsApp / Plaud) e instrucciones técnicas del Ingeniero Residente.
+      - *Evidencia Fotográfica y Multimodal:* Fotografías inalterables con marca de agua (fecha, hora y geolocalización GPS), audios de campo procesados por el motor de IA (vía WhatsApp / Plaud/app misma) e instrucciones técnicas del Ingeniero Residente.
     - **Delimitación y Fronteras:** Es un registro empírico y testimonial de campo; no es el documento financiero de pago ni la certificación contable, pero es el requisito previo e indispensable sin el cual el Ingeniero Residente y el Ingeniero Superior tienen prohibido aprobar cubicaciones de obra.
 
-13. **La Capa Analítica (Curvas S, Valor Ganado EVM, CPI, SPI, CV, SV, BAC, EAC y Variance Analysis):**
+13. **La Capa Analítica (Data Science & Data Analysis) (Curvas S, Valor Ganado EVM, CPI, SPI, CV, SV, BAC, EAC y Variance Analysis):**
     - **Definición y Alcance:** Motor de inteligencia de negocio, control gerencial y diagnóstico predictivo que cruza continuamente los datos del Cronograma (Tiempo), el Presupuesto APU (Costo) y las Cubicaciones de la Bitácora (Alcance Real Ejecutado) aplicando la metodología internacional de Gestión del Valor Ganado (*Earned Value Management - EVM*). Permite detectar desvíos de manera temprana y proyectar el costo y la fecha real de término antes de que ocurran pérdidas financieras.
     - **Métricas y Componentes de Inteligencia:**
       - **Curvas S:** Gráfico acumulado dinámico que superpone el Valor Planificado (*PV - Planned Value* / Curva S Programada), el Costo Real (*AC - Actual Cost* / Desembolsos devengados) y el Valor Ganado (*EV - Earned Value* / Trabajo físico real certificado a precios presupuestados).
@@ -199,7 +283,7 @@ __que comprende un proyecto__: La planificacion conceptual, el diseño, Los plan
     - **Delimitación y Fronteras:** No es una simple declaración de intenciones; genera evidencias documentales auditables (manifiestos de transporte de residuos, certificaciones de origen de madera certificada, permisos de vertido). Es la frontera que valida el cumplimiento socioambiental exigido por instituciones financieras, fondos fiduciarios y promotores con criterios ESG (*Environmental, Social and Governance*).
 
 17. **La Telemetría y Sensores IoT de Obra (*Site Telemetry, IoT Equipment & Physical Monitoring*):**
-    - **Definición y Alcance:** Despliegue de instrumentación digital conectada, hardware IoT y dispositivos telemáticos in situ en el frente de obra y sus activos asociados. Automatiza la captura de magnitudes físicas críticas, monitorea el rendimiento y la seguridad de maquinarias y equipos en tiempo real, e ingesta directamente datos crudos de campo a la Bitácora Digital del CDE sin intervención humana propensa a sesgos o errores manuales.
+    - **Definición y Alcance:** Despliegue de instrumentación digital conectada, hardware IoT y dispositivos telemáticos in situ en el frente de obra y sus activos asociados. Automatiza la captura de magnitudes físicas críticas, monitorea el rendimiento y la seguridad de maquinarias y equipos en tiempo real, Revision EPP en tiempo real, e ingesta directamente datos crudos de campo a la Bitácora Digital del CDE sin intervención humana propensa a sesgos o errores manuales.
     - **Componentes y Sensores en el CDE:**
       - *Sensores de Madurez y Curado del Hormigón:* Sondas IoT embebidas en losas, columnas y vigas críticas que registran la evolución de la temperatura interna y calculan en tiempo real la ganancia de resistencia a compresión ($f'c$), habilitando el desencofrado seguro y acelerado con sustento paramétrico verificable.
       - *Estación Meteorológica y Sensores Ambientales in situ:* Medición continua de temperatura ambiente, humedad relativa, velocidad de ráfagas de viento y pluviometría (lluvia caída en mm/hora). Proporciona evidencia técnica irrefutable para la justificación de paralizaciones de vaciado de hormigón o reclamos de ampliación de plazo contractual por lluvias excesivas.
@@ -235,6 +319,16 @@ __que comprende un proyecto__: La planificacion conceptual, el diseño, Los plan
       - *Retroalimentación a la Librería Global de APUs:* Actualización automática o supervisada de los rendimientos de mano de obra (m²/día de pañete, kg/día de colocación de acero, etc.) y consumo real de insumos en la base de datos de APUs de Angote SRL para afilar la precisión de futuras licitaciones.
       - *Repositorio de Lecciones Aprendidas (Knowledge Base):* Fichas de incidentes, soluciones a cuellos de botella constructivos, alternativas de materiales más eficientes e innovaciones exitosas implementadas en la obra para consulta transversal de todo el equipo de ingenieros superiores y residentes.
     - **Delimitación y Fronteras:** No es una evaluación de desempeño punitiva, sino el motor de mejora continua (*Kaizen*) de la constructora. Sus resultados alimentan directamente los parámetros con los que los Agentes de IA (Claude/Gemini) auditan futuros presupuestos y programaciones.
+
+21. **La Gestión HSEQ (Health, Safety, Environment and Quality; Salud, Seguridad, Medio Ambiente y Calidad):**
+      - **Definición y Alcance:** Sistema de gestión transversal que identifica y controla los riesgos laborales y operativos, previene lesiones y enfermedades ocupacionales, reduce los impactos ambientales de las actividades de obra y verifica que los procesos y entregables cumplan los requisitos técnicos y de calidad aplicables.
+      - **Componentes en el CDE:** Plan HSEQ por proyecto y obra; matrices de peligros, riesgos e impactos; inducciones y capacitaciones; entrega y control de equipos de protección personal; permisos de trabajo para actividades de riesgo; inspecciones y auditorías; reportes de incidentes y casi accidentes; controles ambientales; Seguimiento Utilizacion de EPP; Cursos de Altura; resultados de ensayos e inspecciones de calidad; registro de no conformidades, acciones correctivas y evidencias de cierre.
+      - **Delimitación y Fronteras:** HSEQ gobierna la prevención y el control operativo durante el diseño y la ejecución, y conserva evidencia verificable de su cumplimiento. Se coordina con la sostenibilidad y la gestión ambiental, pero no las sustituye; tampoco reemplaza las autorizaciones de las autoridades, la responsabilidad profesional del diseñador ni la supervisión técnica de la obra.
+
+22. **La Permisología Legal y Regulatoria (*Permits, Licenses & Regulatory Approvals*):**
+      - **Definición y Alcance:** Gestión del ciclo de vida de los permisos, licencias, aprobaciones y autorizaciones requeridos para diseñar, construir, modificar y entregar cada proyecto. Identifica los requisitos aplicables según la ubicación, el uso y el alcance de la intervención; coordina la preparación y presentación de expedientes, y da seguimiento a su revisión, aprobación, vigencia, condiciones y cierre.
+      - **Componentes en el CDE:** Matriz de requisitos y trámites por proyecto y obra; entidad competente; responsable; fechas de presentación, respuesta y vencimiento; planos y documentos sometidos con sus revisiones; número de expediente; estado del trámite; observaciones y respuestas; permisos o resoluciones aprobados; condiciones asociadas; inspecciones y evidencias de cumplimiento; renovaciones y cierre del expediente.
+      - **Delimitación y Fronteras:** Comprende la gestión documental y el seguimiento de trámites ante las entidades competentes —por ejemplo, MIVED, ayuntamientos, MOPC, MITUR y Ministerio de Medio Ambiente, según corresponda—. El CODIA puede intervenir en requisitos de colegiatura, firmas o validación profesional, pero no se considera por sí mismo una autoridad emisora de permisos de construcción. La permisología no sustituye la aprobación interna del diseño, la gestión HSEQ ni los contratos del proyecto.
 
 
 - **Regla Inviolable:** Ninguna orden de compra, cubicación o pago puede existir en el CDE sin vincularse inequívocamente a un Proyecto y a un Centro de Costos activo con responsable asignado, a excepcion de aquellas ordenes de compras u ordenes de trabajo para mantenimientos en la oficina o lugar de tabajo y/o otras referencias debidamente documentadas y aprobadas por el Ing. Superior, gastos miscelaneos aprobados por la administracion y gastos de mantenimiento a vehiculos equipos propios u otras referencias debidamente documentadas y aprobadas por la administracion, la finalidad de esto es mantener un control de gastos operativos blindado para la empresa.
@@ -281,9 +375,9 @@ __que comprende un proyecto__: La planificacion conceptual, el diseño, Los plan
   - Vinculación directa entre el costo de combustible/mantenimiento y los centros de costos de los proyectos beneficiados.
 
 ### 3.2. Orquestación Multi-Agente de IA y Captura Multimodal (*Autonomous AI Multi-Agent & Multimodal Ingestion*)
-- **Propósito:** Automatización inteligente de tareas operativas y de campo mediante un orquestador central (Claude SDK) y agentes especializados, conectados vía canales estándar (WhatsApp API, Email, Dashboards).
-- **Agentes Especializados:**
-  1. **Agente de Compras:** Consulta autónoma de precios a ferreterías vía WhatsApp cruzando la ubicación GPS del camión pesado para aprovisionamiento optimizado en ruta.
+- **Propósito:** Automatización inteligente de tareas operativas y de campo mediante un orquestador central (ADK) y agentes especializados, conectados vía canales estándar (Base de datos, Capa analitica, Motor de Inferencia, CDE API, Ejecucion de tareas autonomas, WhatsApp, Email, Dashboards).
+- **Agentes Especializados:** **EJEMPLOS:**
+  1. **Agente de Compras:** Consulta autónoma de precios a ferreterías vía diferentes medios, Internet, Email, WhatsApp, llamadas, etc. este agente puede cruzar la ubicación GPS del camión pesado para aprovisionamiento optimizado en ruta.
   2. **Agente de Tiempos y Cronograma:** Supervisión activa de subcontratistas vía WhatsApp previo al vencimiento de entregas, registrando bitácoras o escalando cuellos de botella al Ingeniero Residente.
   3. **Agente de Finanzas y Auditoría:** Detección de inconsistencias entre cubicación física y desembolsos, monitoreo de variaciones de APU y alertas de límites fiscales.
   4. **Motor de Visión Artificial Gemini (OCR Anti-Alucinaciones):** Ingesta masiva y procesamiento fotográfico de facturas físicas con rechazo programado automático ante ambigüedad en NCF, RNC o montos.
@@ -358,107 +452,55 @@ graph TD
         RES[Ingeniero Residente / Maestros de Obra]
     end
     subgraph Tecnología e Inteligencia
-        SP2[Speaker 2 - Arquitecto de Software & Cloud]
-        ADR[Adrián - Analista de Datos & Mercado]
+       CEO_
+        - Arquitecto de Software & Cloud]
+       _[ Analista de Datos & Mercado]
     end
     subgraph Administración y Cumplimiento
         CONT[Administrador / Perfil Contable CDE]
         PROCURA[Responsable de Procura / Choferes]
     end
 
-    RAY ---|Lidera| PC[Proyectos, Contratos y Visión Comercial]
-    RAY ---|Valida| PLAN[Presupuestos Base, APU y Adicionales]
+    CEO ---|Lidera| PC[Proyectos, Clientes, Contratos y Visión Comercial]
+    CEO ---|Valida| PLAN[Presupuestos Base, APU y Adicionales]
     RES ---|Ejecuta| WORK[Cubicaciones Físicas y Cuadrillas de Campo]
     SP2 ---|Diseña| TECH[Arquitectura Cloud, Base PostgreSQL y Multi-Agente IA]
-    ADR ---|Modela| MARKET[Base de Precios de Insumos y Datos Ferreteros]
+    IOF ---|Modela| MARKET[Base de Precios de Insumos y Datos Ferreteros]
     CONT ---|Gobierna| FIN[Portal Contable, Aislamiento 606, Nómina y DGII e-CF]
-    PROCURA ---|Opera| FLEET[Flota, Conduces y Recepción de Materiales]
+     ---|Opera| FLEET[Flota, Conduces y Recepción de Materiales]
 ```
 
-- **Raymond (Dirección General / Constructor Líder):** Máxima autoridad en definición de APUs típicos, aprobación de adicionales de clientes, asignación de proyectos y acuerdos comerciales de alto nivel.
-- **Speaker 2 (Tech Lead / Arquitecto Cloud):** Responsable de la infraestructura en DigitalOcean (PostgreSQL, App Platform, S3 Spaces, WAF Cloudflare), APIs de IA (Claude, Gemini), WhatsApp Business API y seguridad del CDE.
+- **Raymond (CEO/ Dirección General / Constructor Líder):** Máxima autoridad en definición de APUs típicos, aprobación de adicionales de clientes, asignación de proyectos y acuerdos comerciales de alto nivel, Aprobacion de Arquitecturas Tech, Software, Infraestructura digital.
+- (Tech Lead / Arquitecto Cloud):** Responsable de la infraestructura en Digital en este caso (PostgreSQL, App Platform, S3 Spaces, WAF Cloudflare, Redis, Duckdb), APIs, IA, WhatsApp Business API y seguridad del CDE.
 - **Administrador / Perfil Contable CDE:** Responsable del portal contable, emisión de comprobantes electrónicos e-CF ante la DGII, generación automática de reportes 606 y 607, segregación de nóminas y conciliación de cuentas por cobrar/pagar.
-- **Adrián (Analista de Datos):** Responsable de la estructura de base de datos de materiales, esquemas JSON, algoritmos de comparación de precios en ferreterías locales y métricas analíticas.
-- **Ingeniero Residente / Supervisión de Obra:** Responsable del levantamiento de cubicaciones semanales in situ, verificación fotográfica, recepción física de insumos y bitácora de incidencias de contratistas.
+- **(Analista de Datos):** Responsable de la estructura de base de datos de materiales, esquemas JSON, algoritmos de comparación de precios en ferreterías locales y métricas analíticas.
+- **Ingenieros Residente / Supervisión de Obra:** Responsable del levantamiento de cubicaciones semanales in situ, verificación fotográfica, recepción física de insumos y bitácora de incidencias de contratistas.
+- **Arquitectos:** Responsables del diseno y Planos Arquitectonicos.
+- **Ingeniero Estructuralista:** Responsables de Disenos Estructural, Planos, Memoria de Calcula, etc.
+- **Ingenieros Tecnicos:** Responsables de Disenos de Planos Tecnicos, MEP, HVAC, etc.
 
 ---
 
 ### Pregunta 4: Flujo Detallado End-to-End para el Primer Walkthrough
 
-#### Caso de Negocio Seleccionado:
-> **"De la Cubicación Física en Campo a la Validación Técnica, Certificación, Facturación Electrónica DGII (e-CF), Registro en Formato 606 y Liquidación en Tesorería"**
+#### Flujo Integral de Trabajo y Gestión del CDE
 
-Este flujo representa el punto de mayor fricción operativa, riesgo fiscal y necesidad de automatización de Constructora Angote SRL.
+El CDE gobierna la información y las aprobaciones durante el ciclo de vida del proyecto. Cada transacción y documento conserva su vínculo con el proyecto, la obra y el centro de costos que corresponda; las excepciones autorizadas se registran con su responsable y justificación. Las tareas automatizadas o asistidas por IA preparan datos y alertas, pero no sustituyen las revisiones ni aprobaciones asignadas a personas.
 
-#### Diagrama de Secuencia del Flujo E2E:
+1. **Apertura y configuración del proyecto:** Dirección define el alcance inicial y la decisión de avanzar; se registra el proyecto, cliente y demás partes en el registro maestro, ubicación, responsables, obras, centros de costos, contratos previstos y jurisdicción aplicable. Se establecen permisos de acceso y una matriz de responsabilidades y aprobaciones.
+2. **Requisitos, estudios y diseño:** Se recopilan requisitos del cliente y del sitio; se incorporan estudios técnicos, diseños, memorias, planos y modelos BIM con autoría, disciplina, revisión y estado. Los responsables técnicos revisan y emiten los documentos aptos para el trámite o para construcción. Las versiones aprobadas quedan identificadas; una revisión posterior no sobrescribe la anterior.
+3. **Permisos y preparación HSEQ:** Se crea la matriz de permisos y autorizaciones aplicables, con entidad, expediente, responsable, fechas, observaciones, condiciones y evidencia de cierre. En paralelo, se preparan los controles HSEQ del proyecto y de cada frente: riesgos, inducciones, equipos de protección, permisos de trabajo, inspecciones, controles ambientales y calidad. El CDE registra el estado y las evidencias; la autoridad competente conserva la decisión de otorgar o denegar sus permisos.
+4. **Líneas base de costo, alcance y tiempo:** Planificación estructura partidas y APUs, presupuesto base, cronograma y flujo financiero. La línea base aprobada se conserva sin sobrescritura. Los cambios de alcance, cantidades, costo o plazo se tramitan como solicitudes de cambio y, si se aprueban, se reflejan en versiones y adendas separadas.
+5. **Contratación y procura:** Se documentan paquetes de trabajo, cotizaciones, comparativos, selección, contrato o subcontrato y órdenes de compra. Cada compromiso identifica su parte, proyecto, obra y centro de costos. La recepción registra conduce o albarán, cantidades, fecha, responsable y discrepancias; una factura se vincula con la compra y su recepción para revisión administrativa y fiscal.
+6. **Ejecución y bitácora:** Antes de ejecutar, el frente consulta el contrato o alcance autorizado y la última revisión aplicable de planos y especificaciones. El Residente registra actividades, cantidades, personal, equipos, materiales, condiciones del sitio e incidencias, adjuntando evidencia disponible. Inspecciones HSEQ y controles de calidad registran hallazgos, responsables, acciones correctivas y cierre; un incumplimiento pendiente se escala y no se presenta como conforme.
+7. **Medición, cubicaciones y certificaciones:** Se registran por separado la cubicación de subcontratista, la certificación de avance al cliente y la medición de control interno. Cada una referencia partida, unidad, periodo, cantidades, evidencia y versión contractual aplicable. El Residente valida la medición de campo y las aprobaciones siguen la matriz de autoridad del proyecto; una diferencia o un alcance no aprobado se devuelve para aclaración, no se convierte automáticamente en obligación de pago o cobro.
+8. **Cambios y decisiones:** Toda solicitud identifica motivo, solicitante y documentos de respaldo. Las áreas técnica, de costos, planificación, HSEQ y permisología evalúan, cuando aplique, impactos en diseño, seguridad, calidad, permisos, presupuesto y cronograma. Dirección y cliente aprueban conforme a sus atribuciones; solo después se emiten las revisiones, adendas y autorizaciones necesarias para ejecutar el cambio. Una instrucción verbal no modifica la línea base.
+9. **Contabilización, cobro y pago:** Administración revisa facturas, comprobantes y soportes; verifica la correspondencia con contrato u orden, recepción o cubicación aprobada, y clasificación fiscal aplicable. Las compras y servicios con comprobante válido se preparan para el tratamiento fiscal que corresponda; jornales y nómina directa de obra permanecen segregados del Formato 606. Los cobros al cliente siguen la modalidad contractual y requieren la certificación correspondiente. Tesorería registra el desembolso y su comprobante; el estado financiero distingue comprometido, devengado y pagado.
+10. **Seguimiento, cierre y aprendizaje:** Los tableros y análisis comparan avance, cronograma, presupuesto, compromisos, devengado y desembolsos con sus fuentes aprobadas; cualquier extracción de IA se valida antes de convertirse en registro oficial. Al cierre se concilian cantidades y cuentas, se completan pendientes HSEQ y permisos, se reúnen entregables conforme a obra, garantías y manuales, y se documentan la entrega y las lecciones aprendidas para alimentar futuras referencias y APUs.
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor RES as Ing. Residente (Obra)
-    actor SUB as Subcontratista / Cuadrilla
-    participant CDE as Plataforma CDE (App/PostgreSQL)
-    participant AGENT as Agente IA (Claude / Gemini)
-    actor RAY as Raymond (Dirección Técnica)
-    actor CONT as Portal Contable / Admin
-    participant DGII as DGII / API Proveedor e-CF
-    participant BANK as Tesorería / Banco
-
-    %% Fase 1: Levantamiento
-    SUB->>RES: Solicita cubicación de partida ejecutada (ej. Envarillado Zapata 100%)
-    RES->>CDE: Registra medición física in situ + fotos de evidencia
-    CDE->>CDE: Contrasta avance vs APU presupuestado y partidas adicionales
-    
-    %% Fase 2: Auditoría y Aprobación
-    CDE->>AGENT: Verifica coherencia matemática y tiempo de ejecución
-    AGENT-->>RAY: Notifica alza de cubicación y alerta de variaciones en Curva S
-    RAY->>CDE: Clic en "Aprobar Cubicación"
-    
-    %% Fase 3: Recepción de Comprobante / Factura
-    alt Subcontratista Formal con NCF
-        SUB->>CDE: Carga foto de factura con NCF
-        CDE->>AGENT: Ingesta Gemini Vision OCR con prompt anti-alucinaciones
-        AGENT->>CDE: Extrae NCF, RNC, Montos, ITBIS y valida contra cubicación
-        CDE->>CONT: Habilita revisión visual en Portal Contable
-        CONT->>DGII: Valida e-CF / NCF y pre-asigna automáticamente al Formato 606
-    else Subcontratista Informal / Mano de Obra a Destajo
-        RES->>CDE: Genera recibo de pago de nómina directa de obra
-        CDE->>CONT: Asigna a Nómina de Campo (Aislado de compras 606)
-    end
-
-    %% Fase 4: Impacto Financiero y Liquidación
-    CDE->>CDE: Actualiza Curva S de Inversión y recalcula Cash Flow
-    CONT->>BANK: Programa orden de transferencia o cheque
-    BANK-->>CDE: Confirmación de débito y registro de recibo de egreso
-    CDE-->>SUB: Notificación automatizada de pago vía WhatsApp
-```
-
-#### Pasos Detallados y Gobernanza del Flujo:
-
-1. **Paso 1: Medición Física y Registro en Campo (Residente)**
-   - El Ingeniero Residente ingresa a la app móvil del CDE, selecciona el proyecto ("Angamos Residence"), abre la partida específica y registra el porcentaje de avance físico real (ej. 50% o 100%).
-   - Adjunta obligatoriamente 2 o más fotos georreferenciadas como evidencia probatoria documental, las cuales se transfieren de inmediato a DigitalOcean Spaces (S3).
-2. **Paso 2: Validación Algorítmica y Control Presupuestario (CDE & IA)**
-   - El sistema calcula el valor monetario de la cubicación multiplicando la cantidad física ejecutada por el precio unitario del APU contractual.
-   - El Agente de Tiempo y Costos evalúa si la partida corresponde al presupuesto base original o a una adenda ("Adicional"). Si es un adicional no aprobado por el cliente, el flujo se congela y notifica al Director de Proyecto.
-3. **Paso 3: Certificación y Autorización (Raymond)**
-   - Raymond recibe notificación consolidada en su vista ejecutiva y aprueba la cubicación con firma digital / token de autorización. La partida pasa al estado `CERTIFICADA_PARA_PAGO`.
-4. **Paso 4: Procesamiento de Comprobante y Segregación Fiscal (Portal Contable)**
-   - Si interviene factura fiscal: el subcontratista o asistente de obra sube la fotografía de la factura. Gemini Vision ejecuta el OCR. Si la confianza es menor a 100% en NCF, RNC o Montos, salta alerta de "Revisión Manual Obligatoria".
-   - Conexión vía API certificada DGII para comprobación de validez fiscal.
-   - El portal contable incorpora automáticamente la transacción en la matriz borrador del **Formato 606**.
-   - **Regla de Aislamiento:** Si el pago corresponde a ajuste de cuadrilla semanal o jornal directo, el sistema bloquea cualquier asignación a casillas del 606 y lo encamina al módulo de **Nómina de Obra (TSS/IR-3/Libro de Salarios)**.
-5. **Paso 5: Actualización de Curva S y Desembolso de Tesorería**
-   - El módulo financiero recalcula en tiempo real la Curva S del proyecto, comparando el desembolso acumulado frente a la proyección de Cash Flow original.
-   - La administración emite la transferencia bancaria y adjunta el comprobante.
-   - El subcontratista recibe automáticamente un mensaje de confirmación por WhatsApp indicando el detalle de la partida, deducciones si aplican y número de referencia bancaria.
+**Gobernanza transversal:** En todas las etapas, el CDE conserva autor, fecha, estado, aprobaciones, versiones y registro de auditoría. Los documentos se corrigen mediante una nueva versión o nota trazable; permisos de consulta, edición y aprobación se asignan por rol. Los estados del flujo reflejan el avance real y no equivalen por sí solos a una aprobación técnica, contractual, fiscal o de una autoridad.
 
 ---
 
 ## 6. Hoja de Ruta Inmediata de Implementación Tecnológica
 
-1. **Modelado Relacional en PostgreSQL:** Implementar esquemas segregados (`core_identities`, `projects_contracts`, `apu_budgets`, `work_delivery`, `procurement_606`, `payroll_direct`, `fleet_telemetry`).
-2. **Conexión de Almacenamiento S3 y Visor In-App:** Configurar DigitalOcean Spaces con CDN Cloudflare para albergar planos, pólizas, fotos y documentos con visor embebido en frontend.
-3. **Pipeline OCR Gemini Vision:** Integrar endpoint de extracción de comprobantes con prompts rigurosos anti-alucinaciones y fallback para validación humana.
-4. **API de Facturación Electrónica DGII:** Enlazar el servicio del Proveedor de Servicios de Facturación Electrónica (PSFE) para emisión automática de e-NCF y generación del 606.
-5. **Configuración de Disparadores WhatsApp:** Establecer canales automatizados para cotizaciones de ferreterías, recordatorios a subcontratistas y alertas de flota.
